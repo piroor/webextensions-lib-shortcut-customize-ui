@@ -17,7 +17,7 @@ Load the file `ShortcutCustomizeUI.js` from any document (options page, sidebar 
 And, call `ShortcutCustomizeUI.build()`. It returns a promise resolved with a DOM element:
 
 ```javascript
-ShortcutCustomizeUI.build.then(list => {
+ShortcutCustomizeUI.build().then(list => {
   document.getElementById('shortcuts').appendChild(list);
 });
 ```
