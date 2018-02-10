@@ -24,7 +24,7 @@ var ShortcutCustomizeUI = {
         if (altLabel.checkbox.checked)
           shortcut.push('Alt');
         if (ctrlLabel.checkbox.checked)
-          shortcut.push(isMac ? 'MacCtrl : 'Ctrl');
+          shortcut.push(isMac ? 'MacCtrl' : 'Ctrl');
         if (metaLabel.checkbox.checked)
           shortcut.push('Command');
         if (shiftLabel.checkbox.checked)
