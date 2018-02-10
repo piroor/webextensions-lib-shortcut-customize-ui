@@ -41,7 +41,7 @@ var ShortcutCustomizeUI = {
         browser.commands.getAll().then(aCommands => {
           for (let defaultCommand of aCommands) {
             if (defaultCommand.name != command.name)
-              return;
+              continue;
             command = defaultCommand;
             apply();
             break;
