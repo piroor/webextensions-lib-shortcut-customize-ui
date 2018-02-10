@@ -209,14 +209,14 @@ var ShortcutCustomizeUI = {
     this.style = document.createElement('style');
     this.style.setAttribute('type', 'text/css');
     this.style.textContent = `
-      li.shortcut${this.commonClass} {
+      li.shortcut.${this.commonClass} {
         border-top: 1px solid ThreeDShadow;
         display: grid;
         grid-template-columns: 1fr max-content;
         margin: 0 0 0.25em;
         padding: 0.25em 0 0;
       }
-      li.shortcut${this.commonClass}:first-child {
+      li.shortcut.${this.commonClass}:first-child {
         border-top: none;
         margin-top: 0;
         padding-top: 0;
