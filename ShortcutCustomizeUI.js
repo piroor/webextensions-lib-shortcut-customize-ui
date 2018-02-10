@@ -76,7 +76,8 @@ var ShortcutCustomizeUI = {
       keyField.setAttribute('type', 'text');
       keyField.setAttribute('size', 8);
       keyField.addEventListener('input', update);
-      keyField.setAttribute('disabled', !this.available);
+      if (!this.available)
+        keyField.setAttribute('disabled', true);
 
       if (this.available) {
         const resetButton = item.appendChild(document.createElement('button'));
@@ -115,7 +116,8 @@ var ShortcutCustomizeUI = {
     label.textContent = aLabel;
     label.checkbox = label.insertBefore(document.createElement('input'), label.firstChild);
     label.checkbox.setAttribute('type', 'checkbox');
-    label.checkbox.setAttribute('disabled', !this.available);
+    if (!this.available)
+      label.checkbox.setAttribute('disabled', true);
     return label;
   }
 };
