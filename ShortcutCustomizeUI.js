@@ -9,11 +9,18 @@ var ShortcutCustomizeUI = {
     typeof browser.commands.update == 'function' &&
     typeof browser.commands.reset == 'function'
   ),
+  uniqueKey: parseInt(Math.random() * Math.pow(2, 16)),
+  get commonClass() {
+    delete this.commonClass;
+    return this.commonClass = `shortcut-customize-ui-${this.uniqueKey}`;
+  },
 
   build: async function() {
     const isMac    = /^Mac/i.test(navigator.platform);
     const commands = await browser.commands.getAll();
     const list     = document.createElement('ul');
+    list.classList.add(this.commonClass);
+    list.classList.add('shortcuts');
     const items    = [];
     for (let command of commands) {
       const update = () => {
@@ -60,10 +67,15 @@ var ShortcutCustomizeUI = {
       };
 
       const item = document.createElement('li');
+      item.classList.add(this.commonClass);
+      item.classList.add('shortcut');
+
       const nameLabel = item.appendChild(document.createElement('label'));
+      nameLabel.classList.add(this.commonClass);
       nameLabel.textContent = `${command.description || command.name}: `;
 
       const keyCombination = item.appendChild(document.createElement('span'));
+      keyCombination.classList.add(this.commonClass);
       keyCombination.classList.add('key-combination');
 
       const ctrlLabel  = this.buildCheckBoxWithLabel(isMac ? 'Control' : 'Ctrl');
@@ -114,6 +126,8 @@ var ShortcutCustomizeUI = {
       items.push(item);
       list.appendChild(item);
     }
+
+    this.installStyleSheet();
 
     return list;
   },
@@ -187,5 +201,27 @@ var ShortcutCustomizeUI = {
         return 'MediaStop';
     }
     return '';
+  },
+
+  installStyleSheet() {
+    if (this.style)
+      return;
+    this.style = document.createElement('style');
+    this.style.setAttribute('type', 'text/css');
+    this.style.textContent = `
+      li.shortcut${this.commonClass} {
+        border-top: 1px solid ThreeDShadow;
+        display: grid;
+        grid-template-columns: 1fr max-content;
+        margin: 0 0 0.25em;
+        padding: 0.25em 0 0;
+      }
+      li.shortcut${this.commonClass}:first-child {
+        border-top: none;
+        margin-top: 0;
+        padding-top: 0;
+      }
+    `;
+    document.head.appendChild(this.style);
   }
 };
