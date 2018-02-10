@@ -23,9 +23,9 @@ var ShortcutCustomizeUI = {
         if (altLabel.checkbox.checked)
           shortcut.push('Alt');
         if (ctrlLabel.checkbox.checked)
-          shortcut.push('Ctrl');
+          shortcut.push(isMac ? 'MacCtrl : 'Ctrl');
         if (metaLabel.checkbox.checked)
-          shortcut.push('Meta');
+          shortcut.push('Command');
         if (shiftLabel.checkbox.checked)
           shortcut.push('Shift');
         shortcut.push(keyField.value);
@@ -51,8 +51,8 @@ var ShortcutCustomizeUI = {
       const apply = () => {
         let key = command.shortcut;
         altLabel.checkbox.checked   = /Alt/i.test(key);
-        ctrlLabel.checkbox.checked  = /Control|Ctrl/i.test(key);
-        metaLabel.checkbox.checked  = /Command|Meta/i.test(key);
+        ctrlLabel.checkbox.checked  = /Ctrl|MacCtrl/i.test(key);
+        metaLabel.checkbox.checked  = /Command/i.test(key) || (isMac && /Ctrl/i.test(key));
         shiftLabel.checkbox.checked = /Shift/i.test(key);
         key = key.replace(/(Alt|Control|Ctrl|Command|Meta|Shift)\+/gi, '');
         keyField.value = key.trim();
@@ -61,11 +61,11 @@ var ShortcutCustomizeUI = {
       const item = document.createElement('li');
       item.textContent = `${command.description || command.name}: `;
 
-      const ctrlLabel  = this.buildCheckBoxWithLabel(isMac ? 'Control' : 'Ctrl', 'Ctrl');
-      const metaLabel  = this.buildCheckBoxWithLabel(isMac ? '⌘' : 'Meta', 'Meta');
+      const ctrlLabel  = this.buildCheckBoxWithLabel(isMac ? 'Control' : 'Ctrl');
+      const metaLabel  = this.buildCheckBoxWithLabel(isMac ? '⌘' : 'Meta');
       const altLabel   = this.buildCheckBoxWithLabel('Alt');
       const shiftLabel = this.buildCheckBoxWithLabel('Shift');
-      const checkboxes = isMac ? [metaLabel, ctrlLabel, altLabel, shiftLabel] : [ctrlLabel, altLabel, shiftLabel, metaLabel] ;
+      const checkboxes = isMac ? [metaLabel, ctrlLabel, altLabel, shiftLabel] : [ctrlLabel, altLabel, shiftLabel /* , metaLabel */] ;
       for (let checkbox of checkboxes) {
         item.appendChild(checkbox);
         item.appendChild(document.createTextNode('+'));
@@ -111,7 +111,7 @@ var ShortcutCustomizeUI = {
     return list;
   },
 
-  buildCheckBoxWithLabel(aLabel, aKey) {
+  buildCheckBoxWithLabel(aLabel) {
     const label = document.createElement('label');
     label.textContent = aLabel;
     label.checkbox = label.insertBefore(document.createElement('input'), label.firstChild);
