@@ -1,6 +1,6 @@
 # webextensions-lib-shortcut-customize-ui
 
-Generates configuration UI for keyboard shortcuts.
+Generates configuration UI for keyboard shortcuts, for WebExtensions-based Firefox addons.
 
 ## Basic usage
 
@@ -10,9 +10,10 @@ Load the file `ShortcutCustomizeUI.js` from any document (options page, sidebar 
 <script type="application/javascript" src="./ShortcutCustomizeUI.js"></script>
 ```
 
-And, call `ShortcutCustomizeUI.build()`. It returns a DOM element:
+And, call `ShortcutCustomizeUI.build()`. It returns a promise resolved with a DOM element:
 
 ```javascript
-var list = await ShortcutCustomizeUI.build();
-document.getElementById('shortcuts').appendChild(list);
+ShortcutCustomizeUI.build.then(list => {
+  document.getElementById('shortcuts').appendChild(list);
+});
 ```
