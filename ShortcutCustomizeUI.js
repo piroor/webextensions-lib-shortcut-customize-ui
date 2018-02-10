@@ -17,7 +17,8 @@ var ShortcutCustomizeUI = {
     const items    = [];
     for (let command of commands) {
       const update = () => {
-        if (!keyField.value.trim())
+        const key = this.normalizeKey(keyField.value);
+        if (!key)
           return;
         let shortcut = [];
         if (altLabel.checkbox.checked)
@@ -28,7 +29,7 @@ var ShortcutCustomizeUI = {
           shortcut.push('Command');
         if (shiftLabel.checkbox.checked)
           shortcut.push('Shift');
-        shortcut.push(keyField.value);
+        shortcut.push(key);
         browser.commands.update({
           name:     command.name,
           shortcut: shortcut.join('+')
@@ -119,5 +120,66 @@ var ShortcutCustomizeUI = {
     if (!this.available)
       label.checkbox.setAttribute('disabled', true);
     return label;
+  },
+
+  normalizeKey(aKey) {
+    aKey = aKey.trim().replace(/\s+/g, '').toLowerCase();
+    if (/^[a-z0-9]$/i.test(aKey) ||
+        /^F([1-9]|1[0-2])$/i.test(aKey))
+      return aKey.toUpperCase();
+
+    switch (aKey) {
+      case ',':
+      case 'Comma':
+        return 'Comma';
+      case '.':
+      case 'period':
+        return 'Period';
+      case 'home':
+        return 'Home';
+      case 'end':
+        return 'End';
+      case 'pageup':
+        return 'PageUp';
+      case 'pagedown':
+        return 'PageDown';
+      case ' ':
+      case 'space':
+        return 'Space';
+      case 'del':
+      case 'delete':
+        return 'Delete';
+      case '↑':
+      case 'up':
+        return 'Up';
+      case '↓':
+      case 'down':
+        return 'Down';
+      case '←':
+      case '<-':
+      case '<=':
+      case 'left':
+        return 'Left';
+      case '→':
+      case '->':
+      case '=>':
+      case 'right':
+        return 'right';
+      case 'next':
+      case 'medianexttrack':
+        return 'MediaNextTrack';
+      case 'play':
+      case 'pause':
+      case 'mediaplaypause':
+        return 'MediaPlayPause';
+      case 'prev':
+      case 'previous':
+      case 'mediaprevtrack':
+        return 'MediaPrevTrack';
+      case 'stop':
+      case 'mediastop':
+        return 'MediaStop';
+    }
+    return '';
   }
 };
