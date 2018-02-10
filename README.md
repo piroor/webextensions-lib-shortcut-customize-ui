@@ -2,6 +2,10 @@
 
 Generates configuration UI for keyboard shortcuts, for WebExtensions-based Firefox addons.
 
+## Screenshots
+
+![(Screenshot of generated UI)](screenshot.png)
+
 ## Basic usage
 
 Load the file `ShortcutCustomizeUI.js` from any document (options page, sidebar panel, or browser action panel), like:
