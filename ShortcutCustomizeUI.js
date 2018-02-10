@@ -50,7 +50,7 @@ var ShortcutCustomizeUI = {
       };
 
       const apply = () => {
-        let key = command.shortcut;
+        let key = command.shortcut || '';
         altLabel.checkbox.checked   = /Alt/i.test(key);
         ctrlLabel.checkbox.checked  = /Ctrl|MacCtrl/i.test(key);
         metaLabel.checkbox.checked  = /Command/i.test(key) || (isMac && /Ctrl/i.test(key));
