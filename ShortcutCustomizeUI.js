@@ -64,6 +64,7 @@ var ShortcutCustomizeUI = {
       nameLabel.textContent = `${command.description || command.name}: `;
 
       const keyCombination = item.appendChild(document.createElement('span'));
+      keyCombination.classList.add('key-combination');
 
       const ctrlLabel  = this.buildCheckBoxWithLabel(isMac ? 'Control' : 'Ctrl');
       const metaLabel  = this.buildCheckBoxWithLabel(isMac ? '⌘' : 'Meta');
