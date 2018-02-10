@@ -60,7 +60,10 @@ var ShortcutCustomizeUI = {
       };
 
       const item = document.createElement('li');
-      item.textContent = `${command.description || command.name}: `;
+      const nameLabel = item.appendChild(document.createElement('label'));
+      nameLabel.textContent = `${command.description || command.name}: `;
+
+      const keyCombination = item.appendChild(document.createElement('span'));
 
       const ctrlLabel  = this.buildCheckBoxWithLabel(isMac ? 'Control' : 'Ctrl');
       const metaLabel  = this.buildCheckBoxWithLabel(isMac ? '⌘' : 'Meta');
@@ -68,12 +71,12 @@ var ShortcutCustomizeUI = {
       const shiftLabel = this.buildCheckBoxWithLabel('Shift');
       const checkboxes = isMac ? [metaLabel, ctrlLabel, altLabel, shiftLabel] : [ctrlLabel, altLabel, shiftLabel /* , metaLabel */] ;
       for (let checkbox of checkboxes) {
-        item.appendChild(checkbox);
-        item.appendChild(document.createTextNode('+'));
+        keyCombination.appendChild(checkbox);
+        keyCombination.appendChild(document.createTextNode('+'));
         checkbox.addEventListener('change', update);
       }
 
-      const keyField = item.appendChild(document.createElement('input'));
+      const keyField = keyCombination.appendChild(document.createElement('input'));
       keyField.setAttribute('type', 'text');
       keyField.setAttribute('size', 8);
       keyField.addEventListener('input', update);
@@ -81,7 +84,7 @@ var ShortcutCustomizeUI = {
         keyField.setAttribute('disabled', true);
 
       if (this.available) {
-        const resetButton = item.appendChild(document.createElement('button'));
+        const resetButton = keyCombination.appendChild(document.createElement('button'));
         resetButton.style.minWidth = 0;
         resetButton.textContent = '🔄';
         resetButton.setAttribute('title', 'Reset');
@@ -102,6 +105,8 @@ var ShortcutCustomizeUI = {
           }
         });
       }
+
+      item.appendChild(keyCombination);
 
       apply();
 
