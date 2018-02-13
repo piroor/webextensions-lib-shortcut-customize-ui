@@ -23,9 +23,6 @@ var ShortcutCustomizeUI = {
     list.classList.add('shortcuts');
     const items    = [];
     for (let command of commands) {
-      const name = `${command.description || command.name}: `
-        .replace(/__MSG_(.+?)__/g, aMatched => browser.i18n.getMessage(aMatched.slice(6, -2)));
-
       const update = () => {
         const key = this.normalizeKey(keyField.value);
         if (!key)
@@ -73,6 +70,8 @@ var ShortcutCustomizeUI = {
       item.classList.add(this.commonClass);
       item.classList.add('shortcut');
 
+      const name = `${command.description || command.name}: `
+        .replace(/__MSG_(.+?)__/g, aMatched => browser.i18n.getMessage(aMatched.slice(6, -2)));
       const nameLabel = item.appendChild(document.createElement('label'));
       nameLabel.classList.add(this.commonClass);
       nameLabel.textContent = name;
