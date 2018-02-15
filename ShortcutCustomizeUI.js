@@ -38,10 +38,10 @@ var ShortcutCustomizeUI = {
           shortcut.push('Shift');
         shortcut.push(key);
         try {
-        browser.commands.update({
-          name:     command.name,
-          shortcut: shortcut.join('+')
-        });
+          browser.commands.update({
+            name:     command.name,
+            shortcut: shortcut.join('+')
+          });
           item.classList.remove('error');
         }
         catch(aError) {
