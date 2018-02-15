@@ -80,10 +80,10 @@ var ShortcutCustomizeUI = {
       keyCombination.classList.add(this.commonClass);
       keyCombination.classList.add('key-combination');
 
-      const ctrlLabel  = this.buildCheckBoxWithLabel(isMac ? 'Control' : 'Ctrl');
-      const metaLabel  = this.buildCheckBoxWithLabel(isMac ? '⌘' : 'Meta');
-      const altLabel   = this.buildCheckBoxWithLabel('Alt');
-      const shiftLabel = this.buildCheckBoxWithLabel('Shift');
+      const ctrlLabel  = this.buildCheckBoxWithLabel(this.localizeKey('Ctrl') || isMac ? 'Control' : 'Ctrl');
+      const metaLabel  = this.buildCheckBoxWithLabel(this.localizeKey('Command') || isMac ? '⌘' : 'Meta');
+      const altLabel   = this.buildCheckBoxWithLabel(this.localizeKey('Alt') || 'Alt');
+      const shiftLabel = this.buildCheckBoxWithLabel(this.localizeKey('Shift') || 'Shift');
       const checkboxes = isMac ? [metaLabel, ctrlLabel, altLabel, shiftLabel] : [ctrlLabel, altLabel, shiftLabel /* , metaLabel */] ;
       for (let checkbox of checkboxes) {
         keyCombination.appendChild(checkbox);
@@ -249,6 +249,9 @@ var ShortcutCustomizeUI = {
       Down:  ['下'],
       Left:  ['左'],
       Right: ['右']
+      // you can localize modifier keys also.
+      // Ctrl:    ['コントロール'],
+      // Command: ['コマンド`],
     }
   },
   get keyNameMap() {
