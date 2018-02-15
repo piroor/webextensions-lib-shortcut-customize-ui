@@ -62,8 +62,8 @@ var ShortcutCustomizeUI = {
         ctrlLabel.checkbox.checked  = /Ctrl|MacCtrl/i.test(key);
         metaLabel.checkbox.checked  = /Command/i.test(key) || (isMac && /Ctrl/i.test(key));
         shiftLabel.checkbox.checked = /Shift/i.test(key);
-        key = key.replace(/(Alt|Control|Ctrl|Command|Meta|Shift)\+/gi, '');
-        keyField.value = this.localizeKey(key.trim());
+        key = key.replace(/(Alt|Control|Ctrl|Command|Meta|Shift)\+/gi, '').trim();
+        keyField.value = this.getLocalizedKey(key) || key;
       };
 
       const item = document.createElement('li');
@@ -80,10 +80,10 @@ var ShortcutCustomizeUI = {
       keyCombination.classList.add(this.commonClass);
       keyCombination.classList.add('key-combination');
 
-      const ctrlLabel  = this.buildCheckBoxWithLabel(this.localizeKey(isMac ? 'MacCtrl' : 'Ctrl') || isMac ? 'Control' : 'Ctrl');
-      const metaLabel  = this.buildCheckBoxWithLabel(this.localizeKey('Command') || isMac ? '⌘' : 'Meta');
-      const altLabel   = this.buildCheckBoxWithLabel(this.localizeKey('Alt') || 'Alt');
-      const shiftLabel = this.buildCheckBoxWithLabel(this.localizeKey('Shift') || 'Shift');
+      const ctrlLabel  = this.buildCheckBoxWithLabel(this.getLocalizedKey(isMac ? 'MacCtrl' : 'Ctrl') || isMac ? 'Control' : 'Ctrl');
+      const metaLabel  = this.buildCheckBoxWithLabel(this.getLocalizedKey('Command') || isMac ? '⌘' : 'Meta');
+      const altLabel   = this.buildCheckBoxWithLabel(this.getLocalizedKey('Alt') || 'Alt');
+      const shiftLabel = this.buildCheckBoxWithLabel(this.getLocalizedKey('Shift') || 'Shift');
       const checkboxes = isMac ? [metaLabel, ctrlLabel, altLabel, shiftLabel] : [ctrlLabel, altLabel, shiftLabel /* , metaLabel */] ;
       for (let checkbox of checkboxes) {
         keyCombination.appendChild(checkbox);
@@ -219,10 +219,10 @@ var ShortcutCustomizeUI = {
     }
     return '';
   },
-  localizeKey(aKey) {
-    if (aKey of this.keyNameMap)
-      return Array.isArray(this.keyNameMap[key]) ? this.keyNameMap[key][0] : this.keyNameMap[key];
-    return aKey;
+  getLocalizedKey(aKey) {
+    if (aKey in this.keyNameMap)
+      return Array.isArray(this.keyNameMap[aKey]) ? this.keyNameMap[aKey][0] : this.keyNameMap[aKey];
+    return '';
   },
 
   installStyleSheet() {
