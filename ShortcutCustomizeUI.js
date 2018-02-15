@@ -63,7 +63,7 @@ var ShortcutCustomizeUI = {
         metaLabel.checkbox.checked  = /Command/i.test(key) || (isMac && /Ctrl/i.test(key));
         shiftLabel.checkbox.checked = /Shift/i.test(key);
         key = key.replace(/(Alt|Control|Ctrl|Command|Meta|Shift)\+/gi, '');
-        keyField.value = key.trim();
+        keyField.value = this.localizeKey(key.trim());
       };
 
       const item = document.createElement('li');
@@ -152,7 +152,7 @@ var ShortcutCustomizeUI = {
 
     switch (aKey) {
       case ',':
-      case 'Comma':
+      case 'comma':
         return 'Comma';
       case '.':
       case 'period':
@@ -201,8 +201,21 @@ var ShortcutCustomizeUI = {
       case 'stop':
       case 'mediastop':
         return 'MediaStop';
+
+      default:
+        for (let key of Object.keys(this.keyNameMap)) {
+          if (this.keyNameMap[key] &&
+              this.keyNameMap[key].indexOf(aKey) > -1)
+            return key;
+        }
+        break;
     }
     return '';
+  },
+  localizeKey(aKey) {
+    if (aKey of this.keyNameMap)
+      return this.keyNameMap[key][0];
+    return aKey;
   },
 
   installStyleSheet() {
@@ -225,5 +238,25 @@ var ShortcutCustomizeUI = {
       }
     `;
     document.head.appendChild(this.style);
+  },
+
+  keyNameMapLocales: {
+    // define tables with https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/i18n/LanguageCode
+    ja: {
+      // key: valid key name listed at https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values
+      // value: array of localized key names
+      Up:    ['上'],
+      Down:  ['下'],
+      Left:  ['左'],
+      Right: ['右']
+    }
+  },
+  get keyNameMap() {
+    delete this.keyNameMap;
+    return this.keyNameMap = (
+      this.keyNameMapLocales[browser.i18n.getUILanguage()] ||
+      this.keyNameMapLocales[browser.i18n.getUILanguage().replace(/[-_].+$/, '')] ||
+      {}
+    );
   }
 };
