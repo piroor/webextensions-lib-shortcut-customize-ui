@@ -257,7 +257,7 @@ var ShortcutCustomizeUI = {
       Left:  ['左'],
       Right: ['右']
       // you can localize modifier keys also.
-      // Alt:     ['コントロール'],
+      // Alt:     ['オルト'],
       // Ctrl:    ['コントロール'],
       // MacCtrl: ['コントロール'], // for macOS
       // Command: ['コマンド`], // for macOS
