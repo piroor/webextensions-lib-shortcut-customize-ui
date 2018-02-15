@@ -204,9 +204,16 @@ var ShortcutCustomizeUI = {
 
       default:
         for (let key of Object.keys(this.keyNameMap)) {
-          if (this.keyNameMap[key] &&
-              this.keyNameMap[key].indexOf(aKey) > -1)
-            return key;
+          if (!(key in this.keyNameMap))
+            return;
+          if (Array.isArray(this.keyNameMap[key])) {
+            if (this.keyNameMap[key].indexOf(aKey) > -1)
+              return key;
+          }
+          else {
+            if (this.keyNameMap[key] == aKey)
+              return key;
+          }
         }
         break;
     }
@@ -214,7 +221,7 @@ var ShortcutCustomizeUI = {
   },
   localizeKey(aKey) {
     if (aKey of this.keyNameMap)
-      return this.keyNameMap[key][0];
+      return Array.isArray(this.keyNameMap[key]) ? this.keyNameMap[key][0] : this.keyNameMap[key];
     return aKey;
   },
 
