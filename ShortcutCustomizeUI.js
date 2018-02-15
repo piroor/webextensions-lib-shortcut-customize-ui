@@ -37,10 +37,16 @@ var ShortcutCustomizeUI = {
         if (shiftLabel.checkbox.checked)
           shortcut.push('Shift');
         shortcut.push(key);
+        try {
         browser.commands.update({
           name:     command.name,
           shortcut: shortcut.join('+')
         });
+          item.classList.remove('error');
+        }
+        catch(aError) {
+          item.classList.add('error');
+        }
       };
 
       const reset = () => {
@@ -50,6 +56,7 @@ var ShortcutCustomizeUI = {
             if (defaultCommand.name != command.name)
               continue;
             command = defaultCommand;
+            item.classList.remove('error');
             apply();
             break;
           }
@@ -242,6 +249,18 @@ var ShortcutCustomizeUI = {
         border-top: none;
         margin-top: 0;
         padding-top: 0;
+      }
+      li.error.${this.commonClass} .key-combination::before {
+        background: #ff6060;
+        border: solid thin white;
+        border-radius: 100%;
+        box-shadow: 0.1em 0.1em 0.2em rgba(0, 0, 0, 0.35);
+        content: "!";
+        color: white;
+        display: inline-block;
+        font-weight: bold;
+        min-width: 1em;
+        text-align: center;
       }
     `;
     document.head.appendChild(this.style);
