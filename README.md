@@ -21,3 +21,7 @@ ShortcutCustomizeUI.build().then(list => {
   document.getElementById('shortcuts').appendChild(list);
 });
 ```
+
+## Need controbution for internalitonalization
+
+By default, shortcut keys and modifier keys are shown with [their general name listed at the API document](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values), but such raw key names may confuse people in some locales. Thus this project needs more help for internationalization/localization. Please pull requests to update [the built-in definitions for localized key names](https://github.com/piroor/webextensions-lib-shortcut-customize-ui/blob/master/ShortcutCustomizeUI.js#L250).

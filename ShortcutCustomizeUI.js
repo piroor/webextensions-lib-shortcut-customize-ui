@@ -255,14 +255,16 @@ var ShortcutCustomizeUI = {
       Up:    ['上'],
       Down:  ['下'],
       Left:  ['左'],
-      Right: ['右']
+      Right: ['右'],
       // you can localize modifier keys also.
       // Alt:     ['オルト'],
       // Ctrl:    ['コントロール'],
       // MacCtrl: ['コントロール'], // for macOS
       // Command: ['コマンド`], // for macOS
       // Shift:   ['シフト`],
-    }
+    },
+    // de: {...},
+    // fr: {...},
   },
   get keyNameMap() {
     delete this.keyNameMap;
