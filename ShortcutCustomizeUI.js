@@ -282,6 +282,21 @@ var ShortcutCustomizeUI = {
       // Command: ['コマンド`], // for macOS
       // Shift:   ['シフト`],
     },
+    ru: {
+      // key: valid key name listed at https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values
+      // value: array of localized key names
+      Up:    ['Вверх'],
+      Down:  ['Вниз'],
+      Left:  ['Влево'],
+      Right: ['Вправо'],
+      Comma: ['Запятая'],
+      Period: ['Точка'],
+      Space: ['Пробел'],
+      MediaNextTrack: ['Следующий трек'],
+      MediaPrevTrack: ['Предыдущий трек'],
+      MediaPlayPause: ['Пауза проигрывания'],
+      MediaStop: ['Остановка проигрывания']
+    },
     // de: {...},
     // fr: {...},
   },
