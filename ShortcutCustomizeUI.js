@@ -200,7 +200,7 @@ var ShortcutCustomizeUI = {
         return 'MediaStop';
 
       default:
-        for (let map of [this.keyNameMap, this.keyNameMapLocales.default]) {
+        for (let map of [this.keyNameMap, this.keyNameMapLocales.global]) {
           for (let key of Object.keys(map)) {
             if (Array.isArray(map[key])) {
               if (map[key].some(aLocalizedKey => aLocalizedKey.toLowerCase() == aKey))
@@ -218,7 +218,7 @@ var ShortcutCustomizeUI = {
     return '';
   },
   getLocalizedKey(aKey) {
-    for (let map of [this.keyNameMap, this.keyNameMapLocales.default]) {
+    for (let map of [this.keyNameMap, this.keyNameMapLocales.global]) {
       if (aKey in map)
         return Array.isArray(map[aKey]) ? map[aKey][0] : map[aKey];
     }
@@ -260,7 +260,7 @@ var ShortcutCustomizeUI = {
   },
 
   keyNameMapLocales: {
-    default: {
+    global: {
       Comma:  [','],
       Period: ['.'],
       Space:  [' '],
