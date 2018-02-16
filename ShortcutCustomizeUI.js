@@ -176,20 +176,12 @@ var ShortcutCustomizeUI = {
       case 'del':
       case 'delete':
         return 'Delete';
-      case '↑':
       case 'up':
         return 'Up';
-      case '↓':
       case 'down':
         return 'Down';
-      case '←':
-      case '<-':
-      case '<=':
       case 'left':
         return 'Left';
-      case '→':
-      case '->':
-      case '=>':
       case 'right':
         return 'right';
       case 'next':
@@ -272,6 +264,10 @@ var ShortcutCustomizeUI = {
       Comma:  [','],
       Period: ['.'],
       Space:  [' '],
+      Up:     ['↑'],
+      Down:   ['↓'],
+      Left:   ['←', '<=', '<-'],
+      Right:  ['→', '=>', '->'],
     },
     // define tables with https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/i18n/LanguageCode
     ja: {
