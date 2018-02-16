@@ -226,8 +226,10 @@ var ShortcutCustomizeUI = {
     return '';
   },
   getLocalizedKey(aKey) {
-    if (aKey in this.keyNameMap)
-      return Array.isArray(this.keyNameMap[aKey]) ? this.keyNameMap[aKey][0] : this.keyNameMap[aKey];
+    for (let map of [this.keyNameMap, this.keyNameMapLocales.default]) {
+      if (aKey in map)
+        return Array.isArray(map[aKey]) ? map[aKey][0] : map[aKey];
+    }
     return '';
   },
 
