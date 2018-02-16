@@ -159,10 +159,8 @@ var ShortcutCustomizeUI = {
       return aKey.toUpperCase();
 
     switch (normalizedKey) {
-      case ',':
       case 'comma':
         return 'Comma';
-      case '.':
       case 'period':
         return 'Period';
       case 'home':
@@ -173,7 +171,6 @@ var ShortcutCustomizeUI = {
         return 'PageUp';
       case 'pagedown':
         return 'PageDown';
-      case ' ':
       case 'space':
         return 'Space';
       case 'del':
@@ -211,16 +208,17 @@ var ShortcutCustomizeUI = {
         return 'MediaStop';
 
       default:
-        for (let key of Object.keys(this.keyNameMap)) {
-          if (!(key in this.keyNameMap))
-            return;
-          if (Array.isArray(this.keyNameMap[key])) {
-            if (this.keyNameMap[key].indexOf(aKey) > -1)
-              return key;
+        for (let map of [this.keyNameMap, this.keyNameMapLocales.default]) {
+          for (let key of Object.keys(map)) {
+            if (Array.isArray(map[key])) {
+              if (map[key].some(aLocalizedKey => aLocalizedKey.toLowerCase() == aKey))
+                return key;
           }
           else {
-            if (this.keyNameMap[key] == aKey)
-              return key;
+              if (map[key] &&
+                  map[key].toLowerCase() == aKey)
+                return key;
+            }
           }
         }
         break;
@@ -268,6 +266,11 @@ var ShortcutCustomizeUI = {
   },
 
   keyNameMapLocales: {
+    default: {
+      Comma:  [','],
+      Period: ['.'],
+      Space:  [' '],
+    },
     // define tables with https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/i18n/LanguageCode
     ja: {
       // key: valid key name listed at https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values
