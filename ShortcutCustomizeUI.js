@@ -152,12 +152,13 @@ var ShortcutCustomizeUI = {
   },
 
   normalizeKey(aKey) {
-    aKey = aKey.trim().replace(/\s+/g, '').toLowerCase();
-    if (/^[a-z0-9]$/i.test(aKey) ||
-        /^F([1-9]|1[0-2])$/i.test(aKey))
+    aKey = aKey.trim().toLowerCase();
+    const normalizedKey = aKey.replace(/\s+/g, '');
+    if (/^[a-z0-9]$/i.test(normalizedKey) ||
+        /^F([1-9]|1[0-2])$/i.test(normalizedKey))
       return aKey.toUpperCase();
 
-    switch (aKey) {
+    switch (normalizedKey) {
       case ',':
       case 'comma':
         return 'Comma';
