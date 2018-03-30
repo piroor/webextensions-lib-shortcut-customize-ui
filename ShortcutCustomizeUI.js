@@ -37,12 +37,14 @@ var ShortcutCustomizeUI = {
         if (shiftLabel.checkbox.checked)
           shortcut.push('Shift');
         shortcut.push(key);
+        let fullShortcut = shortcut.join('+');
         try {
           browser.commands.update({
             name:     command.name,
-            shortcut: shortcut.join('+')
+            shortcut: fullShortcut
           });
           item.classList.remove('error');
+          list.dispatchEvent(event(command.name, fullShortcut));
         }
         catch(aError) {
           item.classList.add('error');
@@ -56,6 +58,7 @@ var ShortcutCustomizeUI = {
             if (defaultCommand.name != command.name)
               continue;
             command = defaultCommand;
+            list.dispatchEvent(event(command.name, command.shortcut));
             item.classList.remove('error');
             apply();
             break;
@@ -71,6 +74,15 @@ var ShortcutCustomizeUI = {
         shiftLabel.checkbox.checked = /Shift/i.test(key);
         key = key.replace(/(Alt|Control|Ctrl|Command|Meta|Shift)\+/gi, '').trim();
         keyField.value = this.getLocalizedKey(key) || key;
+      };
+
+      const event = (name, shortcut) => {
+        return new CustomEvent('ShortcutChanged', {
+          detail: {
+            name: name,
+            key: shortcut
+          }
+        })
       };
 
       const item = document.createElement('li');
