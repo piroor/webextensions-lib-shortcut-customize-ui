@@ -37,7 +37,7 @@ var ShortcutCustomizeUI = {
         if (shiftLabel.checkbox.checked)
           shortcut.push('Shift');
         shortcut.push(key);
-        let fullShortcut = shortcut.join('+');
+        const fullShortcut = shortcut.join('+');
         try {
           browser.commands.update({
             name:     command.name,
