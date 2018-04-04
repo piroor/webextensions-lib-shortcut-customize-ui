@@ -43,14 +43,14 @@ var ShortcutCustomizeUI = {
           shortcut.push('Shift');
         shortcut.push(key);
         command.updateKey = key;
-        let fullShortcut = shortcut.join('+');
+        const fullShortcut = shortcut.join('+');
         try {
           browser.commands.update({
             name:     command.name,
             shortcut: fullShortcut
           });
           item.classList.remove('error');
-          list.dispatchEvent(event(command.name, fullShortcut));
+          list.dispatchEvent(createEvent(command.name, fullShortcut));
         }
         catch(aError) {
           item.classList.add('error');
@@ -64,7 +64,7 @@ var ShortcutCustomizeUI = {
             if (defaultCommand.name != command.name)
               continue;
             command = defaultCommand;
-            list.dispatchEvent(event(command.name, command.shortcut));
+            list.dispatchEvent(createEvent(command.name, command.shortcut));
             item.classList.remove('error');
             apply();
             break;
@@ -82,11 +82,11 @@ var ShortcutCustomizeUI = {
         keyField.value = this.getLocalizedKey(key) || key;
       };
 
-      const event = (name, shortcut) => {
+      const createEvent = (aName, aShortcut) => {
         return new CustomEvent('ShortcutChanged', {
           detail: {
-            name: name,
-            key: shortcut
+            name: aName,
+            key:  aShortcut
           }
         })
       };
