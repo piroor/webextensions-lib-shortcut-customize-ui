@@ -17,7 +17,7 @@ var ShortcutCustomizeUI = {
 
   build: async function(options) {
     var defaults = {
-      showDescription: true
+      showDescriptions: true
     };
     options        = this.setDefaults(options, defaults);
     const isMac    = /^Mac/i.test(navigator.platform);
@@ -93,7 +93,7 @@ var ShortcutCustomizeUI = {
       item.classList.add(this.commonClass);
       item.classList.add('shortcut');
 
-      if (options.showDescription){
+      if (options.showDescriptions) {
         const name = `${command.description || command.name}: `
           .replace(/__MSG_(.+?)__/g, aMatched => browser.i18n.getMessage(aMatched.slice(6, -2)));
         const nameLabel = item.appendChild(document.createElement('label'));
