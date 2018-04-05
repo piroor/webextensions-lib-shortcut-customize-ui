@@ -27,7 +27,8 @@ var ShortcutCustomizeUI = {
     list.classList.add('shortcuts');
     const items    = [];
     for (let command of commands) {
-      command.currentUnmodifedHotkey = command.shortcut.replace(/(Alt|Control|Ctrl|Command|Meta|Shift)\+/gi, '').trim();
+      const initialShortcut = command.shortcut || '';
+      command.currentUnmodifedHotkey = initialShortcut.replace(/(Alt|Control|Ctrl|Command|Meta|Shift)\+/gi, '').trim();
       const update = () => {
         const key = this.normalizeKey(keyField.value);
         if (!key)
