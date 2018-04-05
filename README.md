@@ -22,6 +22,20 @@ ShortcutCustomizeUI.build().then(list => {
 });
 ```
 
+## Options
+
+The method `ShortcutCustomizeUI.build()` accepts some options to control the UI, like:
+
+```javascript
+ShortcutCustomizeUI.build({
+  showDescriptions: false
+}).then(...);
+```
+
+Available options:
+
+ * `showDescriptions`: shows the description or the name of each command (default=`true`)
+
 ## Need contribution for internalitonalization
 
 By default, shortcut keys and modifier keys are shown with [their general name listed at the API document](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values), but such raw key names may confuse people in some locales. Thus this project needs more help for internationalization/localization. Please pull requests to update [the built-in definitions for localized key names](https://github.com/piroor/webextensions-lib-shortcut-customize-ui/blob/master/ShortcutCustomizeUI.js#L269).
