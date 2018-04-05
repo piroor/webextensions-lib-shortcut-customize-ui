@@ -16,10 +16,10 @@ var ShortcutCustomizeUI = {
   },
 
   build: async function(options) {
-    var defaults = {
+    const defaultOptions = {
       showDescriptions: true
     };
-    options        = this.setDefaults(options, defaults);
+    options        = Object.assign({}, defaultOptions, options || {});
     const isMac    = /^Mac/i.test(navigator.platform);
     const commands = await browser.commands.getAll();
     const list     = document.createElement('ul');
@@ -326,11 +326,5 @@ var ShortcutCustomizeUI = {
       this.keyNameMapLocales[browser.i18n.getUILanguage().replace(/[-_].+$/, '')] ||
       {}
     );
-  },
-  setDefaults(options, defaults) {
-    for (var property in options) {
-        defaults[property] = options[property];
-    }
-    return defaults;
   }
 };
