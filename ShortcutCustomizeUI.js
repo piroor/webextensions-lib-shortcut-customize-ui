@@ -27,6 +27,7 @@ var ShortcutCustomizeUI = {
     list.classList.add('shortcuts');
     const items    = [];
     for (let command of commands) {
+      command.updateKey = command.shortcut.replace(/(Alt|Control|Ctrl|Command|Meta|Shift)\+/gi, '').trim();
       const update = () => {
         const key = this.normalizeKey(keyField.value);
         if (!key)
@@ -41,6 +42,7 @@ var ShortcutCustomizeUI = {
         if (shiftLabel.checkbox.checked)
           shortcut.push('Shift');
         shortcut.push(key);
+        command.updateKey = key;
         const fullShortcut = shortcut.join('+');
         try {
           browser.commands.update({
@@ -89,6 +91,10 @@ var ShortcutCustomizeUI = {
         })
       };
 
+      const clean = () => {
+        keyField.value = this.getLocalizedKey(command.updateKey) || command.updateKey;
+      }
+
       const item = document.createElement('li');
       item.classList.add(this.commonClass);
       item.classList.add('shortcut');
@@ -120,6 +126,7 @@ var ShortcutCustomizeUI = {
       keyField.setAttribute('type', 'text');
       keyField.setAttribute('size', 8);
       keyField.addEventListener('input', update);
+      keyField.addEventListener('blur', clean);
       if (!this.available)
         keyField.setAttribute('disabled', true);
 
@@ -280,7 +287,7 @@ var ShortcutCustomizeUI = {
     global: {
       Comma:  [','],
       Period: ['.'],
-      Space:  [' '],
+      Space:  ['Space'],
       Up:     ['↑'],
       Down:   ['↓'],
       Left:   ['←', '<=', '<-'],
