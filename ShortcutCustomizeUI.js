@@ -15,7 +15,11 @@ var ShortcutCustomizeUI = {
     return this.commonClass = `shortcut-customize-ui-${this.uniqueKey}`;
   },
 
-  build: async function() {
+  build: async function(options) {
+    var defaults = {
+      showDescriptions: true
+    };
+    options        = this.setDefaults(options, defaults);
     const isMac    = /^Mac/i.test(navigator.platform);
     const commands = await browser.commands.getAll();
     const list     = document.createElement('ul');
@@ -89,11 +93,13 @@ var ShortcutCustomizeUI = {
       item.classList.add(this.commonClass);
       item.classList.add('shortcut');
 
-      const name = `${command.description || command.name}: `
-        .replace(/__MSG_(.+?)__/g, aMatched => browser.i18n.getMessage(aMatched.slice(6, -2)));
-      const nameLabel = item.appendChild(document.createElement('label'));
-      nameLabel.classList.add(this.commonClass);
-      nameLabel.textContent = name;
+      if (options.showDescriptions) {
+        const name = `${command.description || command.name}: `
+          .replace(/__MSG_(.+?)__/g, aMatched => browser.i18n.getMessage(aMatched.slice(6, -2)));
+        const nameLabel = item.appendChild(document.createElement('label'));
+        nameLabel.classList.add(this.commonClass);
+        nameLabel.textContent = name;
+      }
 
       const keyCombination = item.appendChild(document.createElement('span'));
       keyCombination.classList.add(this.commonClass);
@@ -320,5 +326,11 @@ var ShortcutCustomizeUI = {
       this.keyNameMapLocales[browser.i18n.getUILanguage().replace(/[-_].+$/, '')] ||
       {}
     );
+  },
+  setDefaults(options, defaults) {
+    for (var property in options) {
+        defaults[property] = options[property];
+    }
+    return defaults;
   }
 };
