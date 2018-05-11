@@ -136,7 +136,7 @@ var ShortcutCustomizeUI = {
         resetButton.style.minWidth = 0;
         resetButton.textContent = '🔄';
         resetButton.setAttribute('title', 'Reset');
-        resetButton.addEventListener('keypress', aEvent => {
+        resetButton.addEventListener('key', aEvent => {
           switch (aEvent.key) {
             case 'Enter':
             case ' ':
