@@ -4,7 +4,7 @@
    http://github.com/piroor/webextensions-lib-shortcut-customize-ui
 */
 
-var ShortcutCustomizeUI = {
+const ShortcutCustomizeUI = {
   available: (
     typeof browser.commands.update == 'function' &&
     typeof browser.commands.reset == 'function'
@@ -33,7 +33,7 @@ var ShortcutCustomizeUI = {
         const key = this.normalizeKey(keyField.value);
         if (!key)
           return;
-        let shortcut = [];
+        const shortcut = [];
         if (altLabel.checkbox.checked)
           shortcut.push('Alt');
         if (ctrlLabel.checkbox.checked)
@@ -61,7 +61,7 @@ var ShortcutCustomizeUI = {
       const reset = () => {
         browser.commands.reset(command.name);
         browser.commands.getAll().then(aCommands => {
-          for (let defaultCommand of aCommands) {
+          for (const defaultCommand of aCommands) {
             if (defaultCommand.name != command.name)
               continue;
             command = defaultCommand;
@@ -117,7 +117,7 @@ var ShortcutCustomizeUI = {
       const altLabel   = this.buildCheckBoxWithLabel(this.getLocalizedKey('Alt') || 'Alt');
       const shiftLabel = this.buildCheckBoxWithLabel(this.getLocalizedKey('Shift') || 'Shift');
       const checkboxes = isMac ? [metaLabel, ctrlLabel, altLabel, shiftLabel] : [ctrlLabel, altLabel, shiftLabel /* , metaLabel */] ;
-      for (let checkbox of checkboxes) {
+      for (const checkbox of checkboxes) {
         keyCombination.appendChild(checkbox);
         keyCombination.appendChild(document.createTextNode('+'));
         checkbox.addEventListener('change', update);
@@ -225,13 +225,13 @@ var ShortcutCustomizeUI = {
         return 'MediaStop';
 
       default:
-        for (let map of [this.keyNameMap, this.keyNameMapLocales.global]) {
-          for (let key of Object.keys(map)) {
+        for (const map of [this.keyNameMap, this.keyNameMapLocales.global]) {
+          for (const key of Object.keys(map)) {
             if (Array.isArray(map[key])) {
               if (map[key].some(aLocalizedKey => aLocalizedKey.toLowerCase() == aKey))
                 return key;
-          }
-          else {
+            }
+            else {
               if (map[key] &&
                   map[key].toLowerCase() == aKey)
                 return key;
@@ -243,7 +243,7 @@ var ShortcutCustomizeUI = {
     return '';
   },
   getLocalizedKey(aKey) {
-    for (let map of [this.keyNameMap, this.keyNameMapLocales.global]) {
+    for (const map of [this.keyNameMap, this.keyNameMapLocales.global]) {
       if (aKey in map)
         return Array.isArray(map[aKey]) ? map[aKey][0] : map[aKey];
     }
