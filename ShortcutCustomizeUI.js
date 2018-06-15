@@ -4,6 +4,7 @@
    http://github.com/piroor/webextensions-lib-shortcut-customize-ui
 */
 
+// eslint-disable-next-line no-unused-vars
 const ShortcutCustomizeUI = {
   available: (
     typeof browser.commands.update == 'function' &&
@@ -15,7 +16,7 @@ const ShortcutCustomizeUI = {
     return this.commonClass = `shortcut-customize-ui-${this.uniqueKey}`;
   },
 
-  build: async function(options) {
+  async build(options) {
     const defaultOptions = {
       showDescriptions: true
     };
@@ -53,7 +54,7 @@ const ShortcutCustomizeUI = {
           item.classList.remove('error');
           list.dispatchEvent(createEvent(command.name, fullShortcut));
         }
-        catch(aError) {
+        catch(_aError) {
           item.classList.add('error');
         }
       };
