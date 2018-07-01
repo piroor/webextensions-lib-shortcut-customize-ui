@@ -213,7 +213,8 @@ const ShortcutCustomizeUI = {
         return 'right';
       case 'next':
       case 'medianexttrack':
-        return 'MediaNextTrack';
+      case 'mediatracknext':
+        return 'MediaTrackNext';
       case 'play':
       case 'pause':
       case 'mediaplaypause':
@@ -221,7 +222,8 @@ const ShortcutCustomizeUI = {
       case 'prev':
       case 'previous':
       case 'mediaprevtrack':
-        return 'MediaPrevTrack';
+      case 'mediatrackprev':
+        return 'MediaTrackPrev';
       case 'stop':
       case 'mediastop':
         return 'MediaStop';
@@ -321,8 +323,8 @@ const ShortcutCustomizeUI = {
       Comma: ['Запятая'],
       Period: ['Точка'],
       Space: ['Пробел'],
-      MediaNextTrack: ['Следующий трек'],
-      MediaPrevTrack: ['Предыдущий трек'],
+      MediaTrackNext: ['Следующий трек'],
+      MediaTrackPrev: ['Предыдущий трек'],
       MediaPlayPause: ['Пауза проигрывания'],
       MediaStop: ['Остановка проигрывания']
     },
