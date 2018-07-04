@@ -214,7 +214,14 @@ const ShortcutCustomizeUI = {
       case 'next':
       case 'medianexttrack':
       case 'mediatracknext':
-        return 'MediaTrackNext';
+        // KeyboardEvent API defines "MediaTrackNext" and "MediaTrackPrevious",
+        // but WebExtensions APIs uses "MediaNextTrack" and "MediaPrevTrack" as
+        // valid key names.
+        // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values#Multimedia_keys
+        // https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json/commands#Media_keys
+        // https://developer.chrome.com/extensions/commands#usage
+        // See also: https://github.com/piroor/webextensions-lib-shortcut-customize-ui/issues/10
+        return 'MediaNextTrack';
       case 'play':
       case 'pause':
       case 'mediaplaypause':
@@ -222,8 +229,10 @@ const ShortcutCustomizeUI = {
       case 'prev':
       case 'previous':
       case 'mediaprevtrack':
+      case 'mediaprevioustrack':
       case 'mediatrackprev':
-        return 'MediaTrackPrev';
+      case 'mediatrackprevious':
+        return 'MediaPrevTrack';
       case 'stop':
       case 'mediastop':
         return 'MediaStop';
@@ -323,8 +332,8 @@ const ShortcutCustomizeUI = {
       Comma: ['Запятая'],
       Period: ['Точка'],
       Space: ['Пробел'],
-      MediaTrackNext: ['Следующий трек'],
-      MediaTrackPrev: ['Предыдущий трек'],
+      MediaNextTrack: ['Следующий трек'],
+      MediaPrevTrack: ['Предыдущий трек'],
       MediaPlayPause: ['Пауза проигрывания'],
       MediaStop: ['Остановка проигрывания']
     },
