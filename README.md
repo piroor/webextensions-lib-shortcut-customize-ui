@@ -1,5 +1,7 @@
 # webextensions-lib-shortcut-customize-ui
 
+[![Build Status](https://travis-ci.org/piroor/webextensions-lib-shortcut-customize-ui.svg?branch=master)](https://travis-ci.org/piroor/webextensions-lib-shortcut-customize-ui)
+
 Generates configuration UI for keyboard shortcuts, for WebExtensions-based Firefox addons.
 
 ## Screenshots
