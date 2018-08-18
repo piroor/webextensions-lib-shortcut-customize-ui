@@ -64,7 +64,7 @@ const ShortcutCustomizeUI = {
         })
       };
 
-      const update = () => {
+      const update = async () => {
         const key = this.normalizeKey(keyField.value);
         if (!key)
           return;
@@ -81,15 +81,16 @@ const ShortcutCustomizeUI = {
         command.currentUnmodifedHotkey = key;
         const fullShortcut = shortcut.join('+');
         try {
-          browser.commands.update({
+          await browser.commands.update({
             name:     command.name,
             shortcut: fullShortcut
           });
           item.classList.remove('error');
           list.dispatchEvent(createEvent(command.name, fullShortcut));
         }
-        catch(_aError) {
+        catch(aError) {
           item.classList.add('error');
+          console.log(aError);
         }
       };
 
