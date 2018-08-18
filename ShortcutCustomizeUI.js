@@ -66,8 +66,6 @@ const ShortcutCustomizeUI = {
 
       const update = async () => {
         const key = this.normalizeKey(keyField.value);
-        if (!key)
-          return;
         const shortcut = [];
         if (altLabel.checkbox.checked)
           shortcut.push('Alt');
@@ -89,7 +87,8 @@ const ShortcutCustomizeUI = {
           list.dispatchEvent(createEvent(command.name, fullShortcut));
         }
         catch(aError) {
-          item.classList.add('error');
+          if (key || shortcut.length > 1)
+            item.classList.add('error');
           console.log(aError);
         }
       };
