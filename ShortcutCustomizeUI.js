@@ -118,6 +118,15 @@ const ShortcutCustomizeUI = {
         });
       };
 
+      const clear = () => {
+        altLabel.checkbox.checked =
+          ctrlLabel.checkbox.checked =
+          metaLabel.checkbox.checked =
+          shiftLabel.checkbox.checked = false;
+        keyField.value = '';
+        update();
+      };
+
       const cleanKeyField = () => {
         keyField.value = this.getLocalizedKey(command.currentUnmodifedHotkey) || command.currentUnmodifedHotkey;
       }
@@ -132,30 +141,24 @@ const ShortcutCustomizeUI = {
       keyField.setAttribute('type', 'text');
       keyField.setAttribute('size', 8);
       keyField.addEventListener('input', update);
+      keyField.addEventListener('keyup', event => {
+        switch (event.key) {
+          case 'Escape':
+            clear();
+            break;
+        }
+      });
       keyField.addEventListener('blur', cleanKeyField);
       if (!this.available)
         keyField.setAttribute('disabled', true);
 
       if (this.available) {
-        const resetButton = keyCombination.appendChild(document.createElement('button'));
-        resetButton.style.minWidth = 0;
+        const resetButton = keyCombination.appendChild(this.createOperationButton(() => reset()));
         resetButton.textContent = '🔄';
         resetButton.setAttribute('title', 'Reset');
-        resetButton.addEventListener('key', aEvent => {
-          switch (aEvent.key) {
-            case 'Enter':
-            case ' ':
-              reset();
-              break;
-          }
-        });
-        resetButton.addEventListener('click', aEvent => {
-          switch (aEvent.button) {
-            case 0:
-              reset();
-              break;
-          }
-        });
+        //const clearButton = keyCombination.appendChild(this.createOperationButton(() => clear()));
+        //clearButton.textContent = '✖';
+        //clearButton.setAttribute('title', 'Clear');
       }
 
       apply();
@@ -167,6 +170,26 @@ const ShortcutCustomizeUI = {
     this.installStyleSheet();
 
     return list;
+  },
+  createOperationButton(onCommand) {
+    const button = document.createElement('button');
+    button.style.minWidth = 0;
+    button.addEventListener('keyup', aEvent => {
+      switch (aEvent.key) {
+        case 'Enter':
+        case ' ':
+          onCommand();
+          break;
+      }
+    });
+    button.addEventListener('click', aEvent => {
+      switch (aEvent.button) {
+        case 0:
+          onCommand();
+          break;
+      }
+    });
+    return button;
   },
 
   buildCheckBoxWithLabel(aLabel) {
