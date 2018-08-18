@@ -48,7 +48,7 @@ const ShortcutCustomizeUI = {
       keyCombination.classList.add('key-combination');
 
 
-      const keyField   = keyCombination.appendChild(document.createElement('input'));
+      const keyField   = document.createElement('input');
       const ctrlLabel  = this.buildCheckBoxWithLabel(this.getLocalizedKey(isMac ? 'MacCtrl' : 'Ctrl') || isMac ? 'Control' : 'Ctrl');
       const metaLabel  = this.buildCheckBoxWithLabel(this.getLocalizedKey('Command') || isMac ? '⌘' : 'Meta');
       const altLabel   = this.buildCheckBoxWithLabel(this.getLocalizedKey('Alt') || 'Alt');
@@ -127,6 +127,7 @@ const ShortcutCustomizeUI = {
         keyCombination.appendChild(document.createTextNode('+'));
         checkbox.addEventListener('change', update);
       }
+      keyCombination.appendChild(keyField);
 
       keyField.setAttribute('type', 'text');
       keyField.setAttribute('size', 8);
