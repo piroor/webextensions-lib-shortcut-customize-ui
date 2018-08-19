@@ -16,6 +16,41 @@ const ShortcutCustomizeUI = {
     return this.commonClass = `shortcut-customize-ui-${this.uniqueKey}`;
   },
 
+  setDefaultShortcuts() {
+    browser.commands.getAll().then(commands => {
+      for (const command of commands) {
+        if (command.shortcut || !command.description)
+          continue;
+        this.setDefaultShortcut(command.name, command);
+      }
+    });
+  },
+
+  async setDefaultShortcut(name, command=null) {
+    if (!command) {
+      const commands = await browser.commands.getAll();
+      for (const oneCommand of commands) {
+        if (oneCommand.name == name) {
+          command = oneCommand;
+          break;
+        }
+      }
+      if (!command)
+        throw new Error(`Unknown command: ${name}`);
+    }
+    if (!command.description)
+      return false;
+    const shortcut = command.description.match(this.DEFAULT_SHORTCUT_MATCHER);
+    if (!shortcut || !shortcut[1])
+      return false;
+    await browser.commands.update({
+      name:     name,
+      shortcut: shortcut[1]
+    });
+    return true;
+  },
+  DEFAULT_SHORTCUT_MATCHER: /\(([^ ]+)\)$/,
+
   async build(options) {
     const defaultOptions = {
       showDescriptions: true
@@ -30,13 +65,16 @@ const ShortcutCustomizeUI = {
     for (let command of commands) {
       const initialShortcut = command.shortcut || '';
       command.currentUnmodifedHotkey = initialShortcut.replace(/(Alt|Control|Ctrl|Command|Meta|Shift)\+/gi, '').trim();
+      let defaultShortcut = command.description && command.description.match(this.DEFAULT_SHORTCUT_MATCHER);
+      if (defaultShortcut)
+        defaultShortcut = defaultShortcut[1];
 
       const item = document.createElement('li');
       item.classList.add(this.commonClass);
       item.classList.add('shortcut');
 
       if (options.showDescriptions) {
-        const name = `${command.description || command.name}: `
+        const name = `${(command.description || '').replace(this.DEFAULT_SHORTCUT_MATCHER, '') || command.name}: `
           .replace(/__MSG_(.+?)__/g, aMatched => browser.i18n.getMessage(aMatched.slice(6, -2)));
         const nameLabel = item.appendChild(document.createElement('label'));
         nameLabel.classList.add(this.commonClass);
@@ -103,8 +141,18 @@ const ShortcutCustomizeUI = {
         keyField.value = this.getLocalizedKey(key) || key;
       };
 
-      const reset = () => {
-        browser.commands.reset(command.name);
+      const reset = async () => {
+        if (defaultShortcut) {
+          // Reset to default shortcut extracted from the description.
+          // See also https://bugzilla.mozilla.org/show_bug.cgi?id=1475043
+          command.shortcut = defaultShortcut;
+          apply();
+          await update();
+        }
+        else {
+          browser.commands.reset(command.name);
+        }
+
         browser.commands.getAll().then(aCommands => {
           for (const defaultCommand of aCommands) {
             if (defaultCommand.name != command.name)
@@ -119,12 +167,21 @@ const ShortcutCustomizeUI = {
       };
 
       const clear = () => {
-        altLabel.checkbox.checked =
-          ctrlLabel.checkbox.checked =
-          metaLabel.checkbox.checked =
-          shiftLabel.checkbox.checked = false;
-        keyField.value = '';
-        update();
+        if (defaultShortcut) {
+          // Reset to blank instead of setting blank.
+          // See also https://bugzilla.mozilla.org/show_bug.cgi?id=1475043
+          browser.commands.reset(command.name);
+          command.shortcut = '';
+          apply();
+        }
+        else {
+          altLabel.checkbox.checked =
+            ctrlLabel.checkbox.checked =
+            metaLabel.checkbox.checked =
+            shiftLabel.checkbox.checked = false;
+          keyField.value = '';
+          update();
+        }
       };
 
       const cleanKeyField = () => {

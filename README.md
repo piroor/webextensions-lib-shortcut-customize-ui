@@ -4,11 +4,57 @@
 
 Generates configuration UI for keyboard shortcuts, for WebExtensions-based Firefox addons.
 
+Due to [the bug 1475043](https://bugzilla.mozilla.org/show_bug.cgi?id=1475043 "1475043 - Allow commands.update() to un-set a shortcut, disabling the command"), addons cannot unassign default shortcuts defined by `suggested_key` in its `manifest.json`. This library provides a workaround for the problem: it detects default shortcuts defined in the `description` field and provides ability to assign them as the initial user-defined shortcuts.
+
 ## Screenshots
 
 ![(Screenshot of generated UI)](screenshot.png)
 
-## Basic usage
+## Basic usage (initialization)
+
+Move definitions of the default shortcut in your `manifest.json`, from `suggested_key` to `description`. For exmaple:
+
+```json
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": { "default": "F1" },
+      "description": "__MSG_sidebarToggleDescription__"
+    },
+```
+
+It should become:
+
+```json
+  "commands": {
+    "_execute_browser_action": {
+      "description": "__MSG_sidebarToggleDescription__ (F1)"
+    },
+```
+
+You must put default shortcut in the format `(shortcut)` at the end of the description. Please note that you cannot define platform specific default shortcut.
+
+Then load the file `ShortcutCustomizeUI.js` from a background page, like:
+
+```json
+<script type="application/javascript" src="./ShortcutCustomizeUI.js"></script>
+```
+
+And, call `ShortcutCustomizeUI.setDefaultShortcuts()` just once.
+
+```javascript
+ShortcutCustomizeUI.setDefaultShortcuts();
+```
+
+It assigns default shortcuts defined in the `description` field as the initial user-defined shortcut. Please note that you should not call the method multiple times - it will reassign default shortcuts even if they are unassigned by the user. You should keep the "already initialized" status by something way.
+
+If you need to initialize extra shortcuts added after the initial installation, call `ShortcutCustomizeUI.setDefaultShortcut()` for each command like:
+
+```javascript
+ShortcutCustomizeUI.setDefaultShortcut('newCommandName1');
+ShortcutCustomizeUI.setDefaultShortcut('newCommandName2');
+```
+
+## Basic usage (configuration UI)
 
 Load the file `ShortcutCustomizeUI.js` from any document (options page, sidebar panel, or browser action panel), like:
 
