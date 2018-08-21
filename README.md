@@ -42,7 +42,16 @@ Then load the file `ShortcutCustomizeUI.js` from a background page, like:
 And, call `ShortcutCustomizeUI.setDefaultShortcuts()` just once.
 
 ```javascript
-ShortcutCustomizeUI.setDefaultShortcuts();
+(async () => {
+  // logic to run initialization only once
+  const SHORTCUTS_VERSION = 1;
+  const configs = await browser.storage.local.get({ shortcutsVersion: 0 });
+  switch (configs.shortcutsVersion) {
+    case 0:
+      ShortcutCustomizeUI.setDefaultShortcuts();
+  }
+  browser.storage.local.set({ shortcutsVersion: SHORTCUTS_VERSION });
+})();
 ```
 
 It assigns default shortcuts defined in the `description` field as the initial user-defined shortcut. Please note that you should not call the method multiple times - it will reassign default shortcuts even if they are unassigned by the user. You should keep the "already initialized" status by something way.
@@ -50,8 +59,19 @@ It assigns default shortcuts defined in the `description` field as the initial u
 If you need to initialize extra shortcuts added after the initial installation, call `ShortcutCustomizeUI.setDefaultShortcut()` for each command like:
 
 ```javascript
-ShortcutCustomizeUI.setDefaultShortcut('newCommandName1');
-ShortcutCustomizeUI.setDefaultShortcut('newCommandName2');
+(async () => {
+  // logic to run initialization and migration only once
+  const SHORTCUTS_VERSION = 2;
+  const configs = await browser.storage.local.get({ shortcutsVersion: 0 });
+  switch (configs.shortcutsVersion) {
+    case 0: // on initial startup
+      ShortcutCustomizeUI.setDefaultShortcuts();
+    case 1: // on updated
+      ShortcutCustomizeUI.setDefaultShortcut('newCommand');
+      ShortcutCustomizeUI.setDefaultShortcut('extraCommand');
+  }
+  browser.storage.local.set({ shortcutsVersion: SHORTCUTS_VERSION });
+})();
 ```
 
 ## Basic usage (configuration UI)
