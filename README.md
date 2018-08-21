@@ -56,7 +56,22 @@ And, call `ShortcutCustomizeUI.setDefaultShortcuts()` just once.
 
 It assigns default shortcuts defined in the `description` field as the initial user-defined shortcut. Please note that you should not call the method multiple times - it will reassign default shortcuts even if they are unassigned by the user. You should keep the "already initialized" status by something way.
 
-If you need to initialize extra shortcuts added after the initial installation, call `ShortcutCustomizeUI.setDefaultShortcut()` for each command like:
+If you add extra shortcuts added after the initial release, you need to add command definitions to the `manifest.json` like:
+
+```json
+"commands": {
+    "_execute_browser_action": {
+      "description": "__MSG_sidebarToggleDescription__ (F1)"
+    },
+    "newCommand": {
+      "description": "__MSG_newCommand__ (Ctrl+Alt+PageUp)"
+    },
+    "extraCommand": {
+      "description": "__MSG_newCommand__ (Ctrl+Alt+Home)"
+    },
+```
+
+and call `ShortcutCustomizeUI.setDefaultShortcut()` for each command on the startup, like:
 
 ```javascript
 (async () => {
