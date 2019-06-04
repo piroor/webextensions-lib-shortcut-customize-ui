@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/piroor/webextensions-lib-shortcut-customize-ui.svg?branch=master)](https://travis-ci.org/piroor/webextensions-lib-shortcut-customize-ui)
 
-*Important Note: Firefox 66 and later support changing of keyboard shortcuts via about:addons natively. This library is no longer required.*
+*Important Note: Firefox 66 and later natively support changing of keyboard shortcuts via about:addons. This library is no longer required.*
 
 
 Generates configuration UI for keyboard shortcuts, for WebExtensions-based Firefox addons. Note that this library will become obsolete after [the bug 1303384](https://bugzilla.mozilla.org/show_bug.cgi?id=1303384 "1303384 - UI for re-assigning an extension's command shortcut") fixed.
