@@ -2,6 +2,9 @@
 
 [![Build Status](https://travis-ci.org/piroor/webextensions-lib-shortcut-customize-ui.svg?branch=master)](https://travis-ci.org/piroor/webextensions-lib-shortcut-customize-ui)
 
+*Important Note: Firefox 66 and later support changing of keyboard shortcuts via about:addons natively. This library is no longer required.*
+
+
 Generates configuration UI for keyboard shortcuts, for WebExtensions-based Firefox addons. Note that this library will become obsolete after [the bug 1303384](https://bugzilla.mozilla.org/show_bug.cgi?id=1303384 "1303384 - UI for re-assigning an extension's command shortcut") fixed.
 
  * Due to [the bug 1325692](https://bugzilla.mozilla.org/show_bug.cgi?id=1325692 "1325692 - [commands] Explicit support for overriding built-in keyboard shortcuts by WebExtensions") you cannot use some printable key shortcuts reserved for Firefox's built-in commands (like "Ctrl-A"). On the other hand, you can override non-printable key shortcuts (like "Ctrl-Shift-Left").
