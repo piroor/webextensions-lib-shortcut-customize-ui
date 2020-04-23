@@ -55,7 +55,7 @@ const ShortcutCustomizeUI = {
     const defaultOptions = {
       showDescriptions: true
     };
-    options        = Object.assign({}, defaultOptions, options || {});
+    options        = { ...defaultOptions, ...(options || {}) };
     const isMac    = /^Mac/i.test(navigator.platform);
     const commands = await browser.commands.getAll();
     const list     = document.createElement('ul');
