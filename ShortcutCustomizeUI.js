@@ -4,7 +4,8 @@
    http://github.com/piroor/webextensions-lib-shortcut-customize-ui
 */
 
-var ShortcutCustomizeUI = {
+// eslint-disable-next-line no-unused-vars
+const ShortcutCustomizeUI = {
   available: (
     typeof browser.commands.update == 'function' &&
     typeof browser.commands.reset == 'function'
@@ -15,7 +16,46 @@ var ShortcutCustomizeUI = {
     return this.commonClass = `shortcut-customize-ui-${this.uniqueKey}`;
   },
 
-  build: async function() {
+  setDefaultShortcuts() {
+    browser.commands.getAll().then(commands => {
+      for (const command of commands) {
+        if (command.shortcut || !command.description)
+          continue;
+        this.setDefaultShortcut(command.name, command);
+      }
+    });
+  },
+
+  async setDefaultShortcut(name, command=null) {
+    if (!command) {
+      const commands = await browser.commands.getAll();
+      for (const oneCommand of commands) {
+        if (oneCommand.name == name) {
+          command = oneCommand;
+          break;
+        }
+      }
+      if (!command)
+        throw new Error(`Unknown command: ${name}`);
+    }
+    if (!command.description)
+      return false;
+    const shortcut = command.description.match(this.DEFAULT_SHORTCUT_MATCHER);
+    if (!shortcut || !shortcut[1])
+      return false;
+    await browser.commands.update({
+      name:     name,
+      shortcut: shortcut[1]
+    });
+    return true;
+  },
+  DEFAULT_SHORTCUT_MATCHER: /\(([^ ]+)\)$/,
+
+  async build(options) {
+    const defaultOptions = {
+      showDescriptions: true
+    };
+    options        = Object.assign({}, defaultOptions, options || {});
     const isMac    = /^Mac/i.test(navigator.platform);
     const commands = await browser.commands.getAll();
     const list     = document.createElement('ul');
@@ -23,11 +63,48 @@ var ShortcutCustomizeUI = {
     list.classList.add('shortcuts');
     const items    = [];
     for (let command of commands) {
-      const update = () => {
+      const initialShortcut = command.shortcut || '';
+      command.currentUnmodifedHotkey = initialShortcut.replace(/(Alt|Control|Ctrl|Command|Meta|Shift)\+/gi, '').trim();
+      let defaultShortcut = command.description && command.description.match(this.DEFAULT_SHORTCUT_MATCHER);
+      if (defaultShortcut)
+        defaultShortcut = defaultShortcut[1];
+
+      const item = document.createElement('li');
+      item.classList.add(this.commonClass);
+      item.classList.add('shortcut');
+
+      if (options.showDescriptions) {
+        const name = `${(command.description || '').replace(this.DEFAULT_SHORTCUT_MATCHER, '') || command.name}: `
+          .replace(/__MSG_(.+?)__/g, aMatched => browser.i18n.getMessage(aMatched.slice(6, -2)));
+        const nameLabel = item.appendChild(document.createElement('label'));
+        nameLabel.classList.add(this.commonClass);
+        nameLabel.textContent = name;
+      }
+
+      const keyCombination = item.appendChild(document.createElement('span'));
+      keyCombination.classList.add(this.commonClass);
+      keyCombination.classList.add('key-combination');
+
+
+      const keyField   = document.createElement('input');
+      const ctrlLabel  = this.buildCheckBoxWithLabel(this.getLocalizedKey(isMac ? 'MacCtrl' : 'Ctrl') || isMac ? 'Control' : 'Ctrl');
+      const metaLabel  = this.buildCheckBoxWithLabel(this.getLocalizedKey('Command') || isMac ? '⌘' : 'Meta');
+      const altLabel   = this.buildCheckBoxWithLabel(this.getLocalizedKey('Alt') || 'Alt');
+      const shiftLabel = this.buildCheckBoxWithLabel(this.getLocalizedKey('Shift') || 'Shift');
+      const checkboxes = isMac ? [metaLabel, ctrlLabel, altLabel, shiftLabel] : [ctrlLabel, altLabel, shiftLabel /* , metaLabel */] ;
+
+      const createEvent = (aName, aShortcut) => {
+        return new CustomEvent('ShortcutChanged', {
+          detail: {
+            name: aName,
+            key:  aShortcut
+          }
+        })
+      };
+
+      const update = async () => {
         const key = this.normalizeKey(keyField.value);
-        if (!key)
-          return;
-        let shortcut = [];
+        const shortcut = [];
         if (altLabel.checkbox.checked)
           shortcut.push('Alt');
         if (ctrlLabel.checkbox.checked)
@@ -37,30 +114,21 @@ var ShortcutCustomizeUI = {
         if (shiftLabel.checkbox.checked)
           shortcut.push('Shift');
         shortcut.push(key);
+        command.currentUnmodifedHotkey = key;
+        const fullShortcut = shortcut.join('+');
         try {
-          browser.commands.update({
+          await browser.commands.update({
             name:     command.name,
-            shortcut: shortcut.join('+')
+            shortcut: fullShortcut
           });
           item.classList.remove('error');
+          list.dispatchEvent(createEvent(command.name, fullShortcut));
         }
         catch(aError) {
-          item.classList.add('error');
+          if (key || shortcut.length > 1)
+            item.classList.add('error');
+          console.log(aError);
         }
-      };
-
-      const reset = () => {
-        browser.commands.reset(command.name);
-        browser.commands.getAll().then(aCommands => {
-          for (let defaultCommand of aCommands) {
-            if (defaultCommand.name != command.name)
-              continue;
-            command = defaultCommand;
-            item.classList.remove('error');
-            apply();
-            break;
-          }
-        });
       };
 
       const apply = () => {
@@ -73,41 +141,76 @@ var ShortcutCustomizeUI = {
         keyField.value = this.getLocalizedKey(key) || key;
       };
 
-      const item = document.createElement('li');
-      item.classList.add(this.commonClass);
-      item.classList.add('shortcut');
+      const reset = async () => {
+        if (defaultShortcut) {
+          // Reset to default shortcut extracted from the description.
+          // See also https://bugzilla.mozilla.org/show_bug.cgi?id=1475043
+          command.shortcut = defaultShortcut;
+          apply();
+          await update();
+        }
+        else {
+          browser.commands.reset(command.name);
+        }
 
-      const name = `${command.description || command.name}: `
-        .replace(/__MSG_(.+?)__/g, aMatched => browser.i18n.getMessage(aMatched.slice(6, -2)));
-      const nameLabel = item.appendChild(document.createElement('label'));
-      nameLabel.classList.add(this.commonClass);
-      nameLabel.textContent = name;
+        browser.commands.getAll().then(aCommands => {
+          for (const defaultCommand of aCommands) {
+            if (defaultCommand.name != command.name)
+              continue;
+            command = defaultCommand;
+            list.dispatchEvent(createEvent(command.name, command.shortcut));
+            item.classList.remove('error');
+            apply();
+            break;
+          }
+        });
+      };
 
-      const keyCombination = item.appendChild(document.createElement('span'));
-      keyCombination.classList.add(this.commonClass);
-      keyCombination.classList.add('key-combination');
+      const clear = () => {
+        if (defaultShortcut) {
+          // Reset to blank instead of setting blank.
+          // See also https://bugzilla.mozilla.org/show_bug.cgi?id=1475043
+          browser.commands.reset(command.name);
+          command.shortcut = '';
+          apply();
+        }
+        else {
+          altLabel.checkbox.checked =
+            ctrlLabel.checkbox.checked =
+            metaLabel.checkbox.checked =
+            shiftLabel.checkbox.checked = false;
+          keyField.value = '';
+          update();
+        }
+      };
 
-      const ctrlLabel  = this.buildCheckBoxWithLabel(this.getLocalizedKey(isMac ? 'MacCtrl' : 'Ctrl') || isMac ? 'Control' : 'Ctrl');
-      const metaLabel  = this.buildCheckBoxWithLabel(this.getLocalizedKey('Command') || isMac ? '⌘' : 'Meta');
-      const altLabel   = this.buildCheckBoxWithLabel(this.getLocalizedKey('Alt') || 'Alt');
-      const shiftLabel = this.buildCheckBoxWithLabel(this.getLocalizedKey('Shift') || 'Shift');
-      const checkboxes = isMac ? [metaLabel, ctrlLabel, altLabel, shiftLabel] : [ctrlLabel, altLabel, shiftLabel /* , metaLabel */] ;
-      for (let checkbox of checkboxes) {
+      const cleanKeyField = () => {
+        keyField.value = this.getLocalizedKey(command.currentUnmodifedHotkey) || command.currentUnmodifedHotkey;
+      }
+
+      for (const checkbox of checkboxes) {
         keyCombination.appendChild(checkbox);
         keyCombination.appendChild(document.createTextNode('+'));
         checkbox.addEventListener('change', update);
       }
+      keyCombination.appendChild(keyField);
 
-      const keyField = keyCombination.appendChild(document.createElement('input'));
       keyField.setAttribute('type', 'text');
       keyField.setAttribute('size', 8);
       keyField.addEventListener('input', update);
+      keyField.addEventListener('keyup', event => {
+        switch (event.key) {
+          case 'Escape':
+            clear();
+            break;
+        }
+      });
+      keyField.addEventListener('blur', cleanKeyField);
       if (!this.available)
         keyField.setAttribute('disabled', true);
 
       if (this.available) {
-        const resetButton = keyCombination.appendChild(document.createElement('button'));
-        resetButton.style.minWidth = 0;
+        const resetButton = keyCombination.appendChild(this.createOperationButton(() => reset()));
         resetButton.textContent = '🔄';
         resetButton.setAttribute('title', 'Reset');
         resetButton.addEventListener('keyup', aEvent => {
@@ -125,9 +228,10 @@ var ShortcutCustomizeUI = {
               break;
           }
         });
+        //const clearButton = keyCombination.appendChild(this.createOperationButton(() => clear()));
+        //clearButton.textContent = '✖';
+        //clearButton.setAttribute('title', 'Clear');
       }
-
-      item.appendChild(keyCombination);
 
       apply();
 
@@ -138,6 +242,26 @@ var ShortcutCustomizeUI = {
     this.installStyleSheet();
 
     return list;
+  },
+  createOperationButton(onCommand) {
+    const button = document.createElement('button');
+    button.style.minWidth = 0;
+    button.addEventListener('keyup', aEvent => {
+      switch (aEvent.key) {
+        case 'Enter':
+        case ' ':
+          onCommand();
+          break;
+      }
+    });
+    button.addEventListener('click', aEvent => {
+      switch (aEvent.button) {
+        case 0:
+          onCommand();
+          break;
+      }
+    });
+    return button;
   },
 
   buildCheckBoxWithLabel(aLabel) {
@@ -182,9 +306,17 @@ var ShortcutCustomizeUI = {
       case 'left':
         return 'Left';
       case 'right':
-        return 'right';
+        return 'Right';
       case 'next':
       case 'medianexttrack':
+      case 'mediatracknext':
+        // KeyboardEvent API defines "MediaTrackNext" and "MediaTrackPrevious",
+        // but WebExtensions APIs uses "MediaNextTrack" and "MediaPrevTrack" as
+        // valid key names.
+        // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values#Multimedia_keys
+        // https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json/commands#Media_keys
+        // https://developer.chrome.com/extensions/commands#usage
+        // See also: https://github.com/piroor/webextensions-lib-shortcut-customize-ui/issues/10
         return 'MediaNextTrack';
       case 'play':
       case 'pause':
@@ -193,19 +325,22 @@ var ShortcutCustomizeUI = {
       case 'prev':
       case 'previous':
       case 'mediaprevtrack':
+      case 'mediaprevioustrack':
+      case 'mediatrackprev':
+      case 'mediatrackprevious':
         return 'MediaPrevTrack';
       case 'stop':
       case 'mediastop':
         return 'MediaStop';
 
       default:
-        for (let map of [this.keyNameMap, this.keyNameMapLocales.global]) {
-          for (let key of Object.keys(map)) {
+        for (const map of [this.keyNameMap, this.keyNameMapLocales.global]) {
+          for (const key of Object.keys(map)) {
             if (Array.isArray(map[key])) {
               if (map[key].some(aLocalizedKey => aLocalizedKey.toLowerCase() == aKey))
                 return key;
-          }
-          else {
+            }
+            else {
               if (map[key] &&
                   map[key].toLowerCase() == aKey)
                 return key;
@@ -217,7 +352,7 @@ var ShortcutCustomizeUI = {
     return '';
   },
   getLocalizedKey(aKey) {
-    for (let map of [this.keyNameMap, this.keyNameMapLocales.global]) {
+    for (const map of [this.keyNameMap, this.keyNameMapLocales.global]) {
       if (aKey in map)
         return Array.isArray(map[aKey]) ? map[aKey][0] : map[aKey];
     }
