@@ -1,6 +1,6 @@
 # webextensions-lib-shortcut-customize-ui
 
-[![Build Status](https://travis-ci.org/piroor/webextensions-lib-shortcut-customize-ui.svg?branch=master)](https://travis-ci.org/piroor/webextensions-lib-shortcut-customize-ui)
+[![Build Status](https://travis-ci.org/piroor/webextensions-lib-shortcut-customize-ui.svg?branch=trunk)](https://travis-ci.org/piroor/webextensions-lib-shortcut-customize-ui)
 
 *Important Note: Firefox 66 and later natively support changing of keyboard shortcuts via about:addons. This library is no longer required.*
 
