@@ -1,0 +1,17 @@
+name: CI/CD
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: setup minimum version Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '13.x'
+    - uses: actions/checkout@v1
+    - run: npm install
+    - run: make lint
